@@ -210,3 +210,119 @@ def train_classifier(
     except Exception as e:
         logger.error("Error during training: %s", str(e))
         raise
+
+def train_fully_finetuned_classifier(
+    encoder,
+    classifier,
+    train_loader,
+    val_loader,
+    criterion,
+    optimizer,
+    num_epochs=50,
+    device='cuda',
+    save_encoder_path='best_classifier/encoder.pth',
+    save_classifier_path='best_classifier/classifier.pth',
+    check_interval=25,
+    min_improvement=0.01
+):
+    """
+    Trains both the encoder and classifier together in a supervised manner.
+
+    Parameters:
+    - encoder (nn.Module): Encoder model to train.
+    - classifier (nn.Module): Classifier model to train.
+    - train_loader (DataLoader): DataLoader for the training set.
+    - val_loader (DataLoader): DataLoader for the validation set.
+    - criterion (nn.Module): Loss function.
+    - optimizer (Optimizer): Optimizer for the combined model.
+    - num_epochs (int): Number of training epochs.
+    - device (str): Device to run the training on ('cuda' or 'cpu').
+    - save_encoder_path (str): Path to save the best encoder model.
+    - save_classifier_path (str): Path to save the best classifier model.
+    - check_interval (int): Number of epochs between validation checks.
+    - min_improvement (float): Minimum improvement in validation loss to continue training.
+
+    Returns:
+    - best_val_loss (float): Best validation loss achieved during training.
+
+    Raises:
+    - Exception: If an error occurs during training.
+    """
+    try:
+        tensorboard_logger = get_tensorboard_logger()
+        encoder.train()
+        classifier.train()
+        encoder.to(device)
+        classifier.to(device)
+        best_val_loss = float('inf')
+        best_accuracy = 0.0
+        total_epochs = 0
+        epochs_since_improvement = 0
+
+        logger.info("Starting full fine-tuning for %d epochs", num_epochs)
+
+        while total_epochs < num_epochs:
+            for _ in range(check_interval):
+                if total_epochs >= num_epochs:
+                    break
+                total_epochs += 1
+                start_time = time.time()
+                total_loss = 0.0
+
+                for inputs, labels in train_loader:
+                    inputs = inputs.to(device)
+                    labels = labels.to(device)
+
+                    optimizer.zero_grad()
+                    embeddings = encoder(inputs)
+                    outputs = classifier(embeddings)
+                    loss = criterion(outputs, labels)
+                    loss.backward()
+                    optimizer.step()
+                    total_loss += loss.item()
+
+                avg_train_loss = total_loss / len(train_loader)
+                epoch_duration = time.time() - start_time
+
+                # Log training loss and epoch duration
+                tensorboard_logger.add_scalar('Train/Loss', avg_train_loss, total_epochs)
+                tensorboard_logger.add_scalar('Train/Epoch_Duration', epoch_duration, total_epochs)
+
+                logger.info(
+                    "Epoch [%d/%d], Train Loss: %.4f, Duration: %.2f sec",
+                    total_epochs, num_epochs, avg_train_loss, epoch_duration
+                )
+
+            # Validate the model
+            val_loss, val_accuracy = evaluate_classifier(encoder, classifier, val_loader, criterion, device)
+            logger.info(
+                "Validation Loss after %d epochs: %.4f, Validation Accuracy: %.4f",
+                total_epochs, val_loss, val_accuracy
+            )
+            # Log validation metrics
+            tensorboard_logger.add_scalar('Validation/Loss', val_loss, total_epochs)
+            tensorboard_logger.add_scalar('Validation/Accuracy', val_accuracy, total_epochs)
+
+            improvement = best_val_loss - val_loss
+            if improvement > min_improvement:
+                best_val_loss = val_loss
+                best_accuracy = val_accuracy
+                epochs_since_improvement = 0
+                save_model(encoder, save_encoder_path)
+                save_model(classifier, save_classifier_path)
+                logger.info("Improved validation loss. Models saved.")
+                # Log checkpoint metrics
+                tensorboard_logger.add_scalar('Checkpoint/Best_Loss', best_val_loss, total_epochs)
+                tensorboard_logger.add_scalar('Checkpoint/Best_Accuracy', best_accuracy, total_epochs)
+            else:
+                epochs_since_improvement += check_interval
+                logger.info("No significant improvement in validation loss.")
+                if epochs_since_improvement >= check_interval:
+                    logger.info("Early stopping due to no significant improvement.")
+                    break
+
+        logger.info("Full fine-tuning completed. Best validation loss: %.4f, Best Accuracy: %.4f", best_val_loss, best_accuracy)
+        return best_val_loss
+    except Exception as e:
+        logger.error("Error during full fine-tuning: %s", str(e))
+        raise

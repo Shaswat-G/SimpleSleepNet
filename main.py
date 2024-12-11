@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from datasets import ContrastiveEEGDataset, SupervisedEEGDataset
 from utils import load_eeg_data, validate_config, set_seed, setup_logging, setup_tensorboard, get_tensorboard_logger, close_tensorboard
 from models import SimpleSleepNet, SleepStageClassifier
-from training import train_contrastive_model, train_classifier
+from training import train_contrastive_model, train_fully_finetuned_classifier
 from evaluation import LatentSpaceEvaluator, get_predictions, ResultsSaver
 from augmentations import load_augmentations_from_config
 
@@ -192,54 +192,24 @@ def pretrain_contrastive_model(config, eeg_data, device, logger, tensorboard_log
 
     return encoder
 
-def evaluate_latent_space(config, encoder, eeg_data, device, logger):
-    """
-    Evaluate the latent space of the encoder.
+# Comment out latent space evaluation
+# def evaluate_latent_space(config, encoder, eeg_data, device, logger):
+#     # ...existing code...
 
-    Args:
-        config (dict): Configuration dictionary.
-        encoder (SimpleSleepNet): Pretrained encoder model.
-        eeg_data (dict): EEG data.
-        device (torch.device): Device to use for evaluation.
-        logger (logging.Logger): Logger instance.
+def train_full_model(config, encoder, train_loader, test_loader, device, logger, tensorboard_logger):
     """
-    BATCH_SIZE = config["pretraining_params"]["batch_size"]
-    NUM_WORKERS = config["num_workers"]
-    visualization_dataset = ContrastiveEEGDataset(eeg_signals=eeg_data['test'], augmentations=[], return_labels=True)
-    visualization_loader = DataLoader(visualization_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers = NUM_WORKERS)
-
-    evaluator = LatentSpaceEvaluator(
-        model=encoder,
-        dataloader=visualization_loader,
-        device=device,
-        umap_enabled=config["latent_space_params"]["umap_enabled"],
-        pca_enabled=config["latent_space_params"]["pca_enabled"],
-        tsne_enabled=config["latent_space_params"]["tsne_enabled"],
-        visualize=config["latent_space_params"]["visualize"],
-        compute_metrics=config["latent_space_params"]["compute_metrics"],
-        n_clusters=config["latent_space_params"]["n_clusters"],
-        output_image_dir=config["latent_space_params"]["output_image_dir"],
-        output_metrics_dir=config["latent_space_params"]["output_metrics_dir"],
-        experiment_num = config["experiment_num"],
-        visualization_fraction=config["latent_space_params"]["visualization_fraction"]
-    )
-    evaluator.run()
-    logger.info("Latent space evaluation complete")
-
-def train_supervised_classifier(config, encoder, train_loader, test_loader, device, logger, tensorboard_logger):
-    """
-    Train the supervised classifier.
+    Train the encoder and classifier together (full fine-tuning).
 
     Args:
         config (dict): Configuration dictionary.
         encoder (SimpleSleepNet): Pretrained encoder model.
         train_loader (DataLoader): DataLoader for training data.
-        test_loader (DataLoader): DataLoader for test data.
+        test_loader (DataLoader): DataLoader for validation data.
         device (torch.device): Device to use for training.
         logger (logging.Logger): Logger instance.
 
     Returns:
-        tuple: Trained classifier model and path to the best model checkpoint.
+        tuple: Trained classifier model and paths to the best model checkpoints.
     """
     LATENT_DIM = config["pretraining_params"]["latent_dim"]
     DROP_PROB = config["sup_training_params"]["dropout_rate"]
@@ -250,15 +220,20 @@ def train_supervised_classifier(config, encoder, train_loader, test_loader, devi
     tensorboard_logger.add_graph(classifier, sample_input)
     
     criterion = nn.CrossEntropyLoss()
-    supervised_optimizer = optim.Adam(classifier.parameters(), lr=config["sup_training_params"]["learning_rate"])
-    logger.info(f"Classifier created with {sum(p.numel() for p in classifier.parameters() if p.requires_grad)} trainable parameters")
-
+    
+    # Unfreeze encoder parameters
     for param in encoder.parameters():
-        param.requires_grad = False
-    logger.info("Encoder frozen")
-
-    best_classifier_pth = config["sup_training_params"]["best_model_pth"] + str(config["experiment_num"]) + ".pth"
-    train_classifier(
+        param.requires_grad = True
+    logger.info("Encoder parameters unfrozen for full fine-tuning")
+    
+    # Combine parameters
+    combined_params = list(encoder.parameters()) + list(classifier.parameters())
+    supervised_optimizer = optim.Adam(combined_params, lr=config["sup_training_params"]["learning_rate"])
+    logger.info(f"Combined model parameters prepared.")
+    
+    best_encoder_pth = f"{config['sup_training_params']['best_model_pth']}encoder_{config['experiment_num']}.pth"
+    best_classifier_pth = f"{config['sup_training_params']['best_model_pth']}classifier_{config['experiment_num']}.pth"
+    train_fully_finetuned_classifier(
         encoder=encoder,
         classifier=classifier,
         train_loader=train_loader,
@@ -267,20 +242,31 @@ def train_supervised_classifier(config, encoder, train_loader, test_loader, devi
         optimizer=supervised_optimizer,
         num_epochs=config["sup_training_params"]["max_epochs"],
         device=device,
-        save_path=best_classifier_pth,
+        save_encoder_path=best_encoder_pth,
+        save_classifier_path=best_classifier_pth,
         check_interval=config["sup_training_params"]["check_interval"],
         min_improvement=config["sup_training_params"]["min_improvement"]
     )
-    logger.info("Classifier training complete")
-    return classifier, best_classifier_pth
+    logger.info("Full fine-tuning of encoder and classifier complete")
+    return classifier, (best_encoder_pth, best_classifier_pth)
+
+# Comment out the old classifier training function
+# def train_supervised_classifier( ... ):
+#     # ...existing code...
 
 def test_and_save_results(config, encoder, classifier, test_loader, device, logger):
     """
     Test the model and save the classification results.
     """
-    # Load the best classifier weights
-    best_classifier_pth = f"{config['sup_training_params']['best_model_pth']}{config['experiment_num']}.pth"
+    # Load the best encoder and classifier weights
+    best_encoder_pth = f"{config['sup_training_params']['best_model_pth']}encoder_{config['experiment_num']}.pth"
+    best_classifier_pth = f"{config['sup_training_params']['best_model_pth']}classifier_{config['experiment_num']}.pth"
+    encoder.load_state_dict(torch.load(best_encoder_pth))
     classifier.load_state_dict(torch.load(best_classifier_pth))
+    encoder.to(device)
+    classifier.to(device)
+    encoder.eval()
+    classifier.eval()
     
     # Get predictions and true labels
     predictions, true_labels = get_predictions(encoder, classifier, test_loader, device=device)
@@ -313,8 +299,10 @@ def main():
     logger, device, tensorboard_logger = setup_environment(config)
     eeg_data, train_loader, test_loader = prepare_datasets(config, logger)
     encoder = pretrain_contrastive_model(config, eeg_data, device, logger, tensorboard_logger)
-    evaluate_latent_space(config, encoder, eeg_data, device, logger)
-    classifier, _ = train_supervised_classifier(config, encoder, train_loader, test_loader, device, logger, tensorboard_logger)
+    # Comment out the old classifier training call
+    # classifier, _ = train_supervised_classifier(config, encoder, train_loader, test_loader, device, logger, tensorboard_logger)
+    # Call the new training function
+    classifier, _ = train_full_model(config, encoder, train_loader, test_loader, device, logger, tensorboard_logger)
     test_and_save_results(config, encoder, classifier, test_loader, device, logger)
     logger.info("Experiment complete")
     close_tensorboard()

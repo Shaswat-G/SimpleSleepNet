@@ -34,7 +34,7 @@
     "dropout_rate": 0.5,
     "check_interval": 2,
     "min_improvement": 0.005,
-    "best_model_pth": "checkpoints/classifier/classifier_"
+    "best_model_pth": "checkpoints/full_model/"
   },
   "experiment_num": 1110,
   "augmentations": {
