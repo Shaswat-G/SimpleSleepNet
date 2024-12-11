@@ -1,0 +1,49 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Data files
+dset/
+*.csv
+*.h5
+*.hdf5
+*.pkl
+*.npy
+*.npz
+*.xlsx
+*.edf
+*.png
+
+
+# Checkpoint files
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+
+# Results
+results/
+latent_space/
+
+# Logs
+logs/
+*.log
+
+# TensorFlow logs (if you choose to include them, remove the next line)
+# tensorflow_logs/
+# To include TensorFlow logs, ensure they are not listed here.
+
+# Miscellaneous
+*.DS_Store
+*.idea/
+*.vscode/
