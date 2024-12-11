@@ -219,7 +219,16 @@ def train_full_model(config, encoder, train_loader, test_loader, device, logger,
     sample_input = torch.zeros(1, LATENT_DIM).to(device)
     tensorboard_logger.add_graph(classifier, sample_input)
     
-    criterion = nn.CrossEntropyLoss()
+    # Compute class weights to handle class imbalance
+    labels = []
+    for _, label in train_loader.dataset:
+        labels.append(label)
+    labels = torch.tensor(labels)
+    class_counts = torch.bincount(labels, minlength=NUM_CLASSES).float()
+    class_weights = 1.0 / class_counts
+    class_weights = class_weights / class_weights.sum() * NUM_CLASSES  # Normalize
+    class_weights = class_weights.to(device)
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
     
     # Unfreeze encoder parameters
     for param in encoder.parameters():
