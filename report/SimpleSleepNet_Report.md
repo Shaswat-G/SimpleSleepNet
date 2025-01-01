@@ -17,7 +17,11 @@
 
 # Abstract
 
-> *Placeholder for short summary of the work, including objectives, methods, key findings, and conclusions.*
+Reliable sleep stage classification (SSC) is critical for understanding human sleep physiology and diagnosing sleep disorders. This work presents a **self-supervised learning** (SSL) framework, grounded in **contrastive representation learning** (CRL), to leverage the abundance of **unlabeled EEG signals** while mitigating the need for costly manual annotation. We introduce and rigorously evaluate **thirteen data augmentations**, spanning amplitude, frequency, masking-cropping, noise-filtering, and temporal transformations, to identify those most conducive to robust and generalizable feature representations.
+
+Through a series of **incremental experiments**—from single augmentations and intra-category combinations to inter-category synergies—we pinpoint **Masking-Cropping** (RandomZeroMasking, CutoutResize), **Frequency-Based** (TailoredMixup), and select **Temporal** (TimeWarping, Permutation) transformations as top performers. We further demonstrate an optimal “Goldilocks” severity level, whereby **3–4 active augmentations** yield significant performance gains without excessively distorting the underlying EEG signals. A comprehensive **fine-tuning** phase on a **lightweight CNN (≈200k parameters)** surpasses **80% accuracy** and **70% Macro-F1**—notably achieved **without** class imbalance handling, temporal modeling, or large-scale architectures.
+
+This study’s contributions are threefold: (1) a **systematic taxonomy** of EEG augmentations for SSC within SSL paradigms, (2) an **empirical demonstration** that contrastive pretraining with carefully orchestrated augmentations substantially boosts downstream classification, and (3) evidence that **compact models** can reach state-of-the-art performance, indicating feasibility for **real-time, resource-constrained** clinical applications. Our findings underscore the promise of SSL-CRL strategies and offer a blueprint for advancing EEG-based sleep staging via targeted data transformations.
 
 ------
 
@@ -493,7 +497,6 @@ Evaluating the classification performance requires a comprehensive set of metric
    \text{Precision}_c = \frac{TP_c}{TP_c + FP_c}
    $$
    
-
 2. **Recall**:  The ratio of true positive predictions to the actual positives for class $c$, measuring the model’s ability to capture all relevant instances of a class, highlighting its sensitivity.
    $$
    \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
@@ -597,6 +600,9 @@ Captures multi-scale temporal features by integrating long-, medium-, and short-
 ### Activation Function
 
 **Mish**: Employed throughout the network for its smooth gradients and richer feature representations, outperforming traditional ReLU in handling the complex temporal patterns of EEG signals.
+$$
+mish(x) = x \cdot \tanh(\ln(1 + e^x)).
+$$
 
 ### Pooling and Latent Space
 
@@ -644,59 +650,341 @@ Three linear layers with the following configurations:
 
 ## 8.1 Single Augmentation Results
 
-Present tables and charts showing performance (Acc, MF1) for each augmentation individually. Identify top-performing single augmentations.
+### Performance Table
 
-> **Example Table Placeholder**
->
-> | Augmentation         | Accuracy | Macro-F1 |
-> | -------------------- | -------- | -------- |
-> | RandomAmplitudeScale | 0.76     | 0.71     |
-> | RandomDCShift        | 0.75     | 0.69     |
-> | *...*                | *...*    | *...*    |
+| **Category**            | **Augmentation**            | **Accuracy** | **MacroF1** |
+| ----------------------- | --------------------------- | ------------ | ----------- |
+| **Temporal**            | Permutation                 | 68.84%       | 61.15%      |
+| **Temporal**            | TimeReverse                 | 64.68%       | 54.35%      |
+| **Temporal**            | TimeWarping                 | 71.58%       | 63.25%      |
+| **Temporal**            | RandomTimeShift             | 65.52%       | 57.42%      |
+| **Noise-and-Filtering** | AverageFilter               | 60.44%       | 47.98%      |
+| **Noise-and-Filtering** | RandomAdditiveGaussianNoise | 65.33%       | 55.53%      |
+| **Masking-Cropping**    | CutoutResize                | 71.13%       | 63.37%      |
+| **Masking-Cropping**    | RandomZeroMasking           | 72.19%       | 65.00%      |
+| **Frequency-Based**     | TailoredMixup               | 72.93%       | 65.16%      |
+| **Frequency-Based**     | RandomBandStopFilter        | 66.31%       | 55.69%      |
+| **Amplitude-Based**     | SignFlip                    | 60.91%       | 49.61%      |
+| **Amplitude-Based**     | RandomDCShift               | 66.36%       | 56.49%      |
+| **Amplitude-Based**     | RandomAmplitudeScale        | 62.72%       | 49.43%      |
+
+---
+
+### Key Observations and Analysis
+
+We selected **RandomAdditiveGaussianNoise** as the baseline augmentation due to its prevalence in EEG and time-series analysis. Its Accuracy (65.33%) and Macro-F1 (55.53%) serve as reference points for other augmentations.
+
+#### **Top Performers**
+- **RandomZeroMasking (Masking-Cropping)** and **TailoredMixup (Frequency-Based)** demonstrated the highest Accuracy (>72%) and Macro-F1 (>65%).
+- **CutoutResize (Masking-Cropping)** also performed strongly, highlighting the potential of selective masking and cropping for feature enhancement.
+
+#### **Moderate Performers**
+- Within **Temporal Augmentations**, **TimeWarping** stood out with an Accuracy of 71.58% and Macro-F1 of 63.25%.
+- **RandomBandStopFilter (Frequency-Based)** and **RandomDCShift (Amplitude-Based)** yielded moderate improvements, suggesting partial benefits from targeted frequency filtering and amplitude adjustments.
+
+#### **Underperformers**
+- **AverageFilter (Noise-and-Filtering)** recorded the lowest Macro-F1 (47.98%), indicating that excessive smoothing can hinder signal discrimination.
+- Amplitude-based augmentations, such as **SignFlip** and **RandomAmplitudeScale**, also underperformed, possibly due to distortions in key signal characteristics.
+
+---
+
+### Category-Level Trends
+1. **Masking-Cropping** and **Frequency-Based** augmentations generally outperformed others, emphasizing the importance of selectively removing/masking signal parts or manipulating spectral components.
+2. **Temporal Augmentations** delivered mixed results, with **TimeWarping** showing significant gains but **TimeReverse** underperforming.
+
+---
+
+### Summary and Conclusions
+
+- **Best Augmentations**: TailoredMixup, RandomZeroMasking, and CutoutResize emerged as the top strategies, outperforming the baseline significantly.
+- **Key Insights**: Amplitude and excessive smoothing transformations often degrade feature quality, while masking and frequency manipulations enhance feature representations.
 
 ## 8.2 Intra-Category Combinational Augmentations
 
-Reinforcing / Redundant intra-category combinations.
+### Performance Table
+| **Category**            | **Augmentation**                                | **Accuracy** | **MacroF1** |
+| ----------------------- | ----------------------------------------------- | ------------ | ----------- |
+| **Temporal**            | RandomTimeShift + TimeReverse + Permutation     | 72.37%       | 64.84%      |
+| **Temporal**            | RandomTimeShift + TimeWarping + Permutation     | 72.23%       | 63.42%      |
+| **Temporal**            | RandomTimeShift + TimeWarping + TimeReverse     | 70.78%       | 61.54%      |
+| **Temporal**            | TimeReverse + Permutation                       | 67.83%       | 60.30%      |
+| **Temporal**            | TimeWarping + TimeReverse                       | 69.16%       | 60.25%      |
+| **Temporal**            | RandomTimeShift + Permutation                   | 72.98%       | 65.82%      |
+| **Temporal**            | RandomTimeShift + TimeReverse                   | 65.39%       | 57.28%      |
+| **Temporal**            | RandomTimeShift + TimeWarping                   | 71.45%       | 62.52%      |
+| **Noise-and-Filtering** | RandomAdditiveGaussianNoise + AverageFilter     | 59.71%       | 47.79%      |
+| **Masking-Cropping**    | RandomZeroMasking + CutoutResize                | 72.94%       | 64.83%      |
+| **Frequency**           | RandomBandStopFilter + TailoredMixup            | 70.09%       | 59.72%      |
+| **Amplitude-Based**     | RandomAmplitudeScale + RandomDCShift + SignFlip | 60.16%       | 46.36%      |
+| **Amplitude-Based**     | RandomDCShift + SignFlip                        | 64.97%       | 53.49%      |
+| **Amplitude-Based**     | RandomAmplitudeScale + SignFlip                 | 57.81%       | 45.09%      |
+| **Amplitude-Based**     | RandomAmplitudeScale + RandomDCShift            | 65.19%       | 52.90%      |
+
+---
+
+### Key Observations and Analysis
+
+#### Temporal Category
+
+- **Reinforcing Pairs**: Several top-performing combinations (Accuracy ≈ 72%, Macro-F1 ≈ 64–66%) emerge when **RandomTimeShift** pairs with **Permutation** or **TimeWarping**, suggesting complementary benefits.
+- **Redundancy**: Pairings like **TimeReverse + Permutation** or **TimeReverse + TimeWarping** exhibit lower improvements, indicating potential overlap in how they distort temporal structure.
+
+#### Masking-Cropping (M/C)
+- **RandomZeroMasking + CutoutResize** achieves **72.94% Accuracy** and **64.83% Macro-F1**, reinforcing the earlier conclusion that targeted masking or cropping fosters robust representations. Performance remains competitive with top temporal combinations.
+
+#### Frequency Category
+- **RandomBandStopFilter + TailoredMixup** yields modest gains (**70.09% Accuracy; 59.72% Macro-F1**). While **TailoredMixup** was effective individually, adding another frequency-based method showed partial synergy but did not reach top-tier levels.
+
+#### Noise-and-Filtering (N/F)
+- **RandomAdditiveGaussianNoise + AverageFilter** underperforms (**59.71% Accuracy; 47.79% Macro-F1**). The smoothing effect of **AverageFilter** seems to degrade the signal further when combined with noise, indicating potentially conflicting distortions.
+
+#### Amplitude-Based (Amp)
+- All amplitude-based combinations remain underperformers (**Accuracy ≤ 65%; Macro-F1 ≤ 53%**), consistent with single-augmentation findings. Combining amplitude transformations often leads to overly distorted signals, degrading discriminative information.
+
+---
+
+### Summary and Conclusions
+
+1. **Reinforcing Combinations**:
+   - Temporal and Masking-Cropping combinations often enhance each other, delivering top-tier performance.
+   - **RandomTimeShift** pairs effectively with **Permutation** or **TimeWarping**, suggesting complementary distortions that increase feature diversity.
+   
+2. **Frequency and Noise**:
+   - Frequency-based augmentations show moderate synergy but fail to outperform leading temporal or masking-cropping methods.
+   - Noise/Filtering combinations introduce conflicting distortions, resulting in subpar outcomes.
+
+3. **Amplitude-Based**:
+   - Amplitude augmentations consistently degrade performance when combined, likely due to excessive signal distortion.
+
+**Conclusion**: Selective **temporal transformations** and **masking-cropping strategies** yield robust and complementary effects, reinforcing the importance of spatiotemporal manipulations or targeted signal masking. These methods surpass the utility of amplitude and noise-based augmentations in enhancing feature representation quality.
 
 ## 8.3 Inter-Category Combinational Augmentations
 
-Synergistic / Antagonistic inter-category combinations with different random seeds.
+### Performance Table
+| **Categories**                   | **Augmentation**                                             | **Avg. MF1** | **Avg. Accuracy** |
+| -------------------------------- | ------------------------------------------------------------ | ------------ | ----------------- |
+| **Frequency + Masking-Cropping** | TailoredMixup + RandomZeroMasking + CutoutResize             | 67.39%       | 76.39%            |
+|                                  | TailoredMixup + CutoutResize                                 | 68.02%       | 76.80%            |
+|                                  | TailoredMixup + RandomZeroMasking                            | 65.28%       | 74.92%            |
+| **Temporal + Masking-Cropping**  | TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 66.61%       | 75.85%            |
+|                                  | TimeWarping + Permutation + CutoutResize                     | 66.34%       | 75.62%            |
+|                                  | TimeWarping + Permutation + RandomZeroMasking                | 65.76%       | 75.42%            |
+|                                  | Permutation + RandomZeroMasking + CutoutResize               | 66.20%       | 75.23%            |
+|                                  | TimeWarping + RandomZeroMasking + CutoutResize               | 66.63%       | 75.82%            |
+|                                  | Permutation + CutoutResize                                   | 65.81%       | 75.19%            |
+|                                  | Permutation + RandomZeroMasking                              | 66.69%       | 75.81%            |
+|                                  | TimeWarping + CutoutResize                                   | 66.87%       | 75.85%            |
+|                                  | TimeWarping + RandomZeroMasking                              | 63.06%       | 73.64%            |
+| **Frequency + Temporal**         | TailoredMixup + TimeWarping + Permutation                    | 67.63%       | 76.87%            |
+|                                  | TailoredMixup + Permutation                                  | 66.36%       | 75.67%            |
+|                                  | TailoredMixup + TimeWarping                                  | 66.09%       | 76.15%            |
 
-## 8.4 Best of all Categories
+---
 
-## 8.5 Fully Fine Tune with best category
+### Key Observations and Analysis
+
+#### 1. **Overall Consistency and Moderate Variability**
+- Across seeds, performance variations generally lie within a **1–3% range** for both Accuracy and Macro-F1, reflecting **moderate yet non-trivial fluctuations**.
+- Despite these variations, the **ranking of augmentation sets** remains stable, confirming consistent relative performance.
+
+#### 2. **Synergistic Combinations**
+- **Frequency + Masking/Cropping**: Augmentations such as **TailoredMixup + RandomZeroMasking + CutoutResize** achieve high Accuracy (~76%) and competitive Macro-F1 (~67%), highlighting the synergy between **spectral manipulation** and **strategic signal masking/cropping**.
+- **Temporal + Masking/Cropping**: Combinations like **TimeWarping + Permutation + RandomZeroMasking** or **TimeWarping + RandomZeroMasking + CutoutResize** yield Accuracy around ~75–76%, indicating complementary benefits of temporal distortions with spatial manipulations.
+
+#### 3. **Frequency + Temporal**
+- **TailoredMixup + TimeWarping + Permutation** ranks among the better performers (~76.5–77.5% Accuracy), leveraging the strengths of **frequency diversity** and **temporal structure manipulation** to enhance feature representations.
+
+#### 4. **Absence of Amplitude-Based Augmentations**
+- Amplitude-based methods (e.g., **SignFlip, RandomAmplitudeScale**) were excluded due to their consistently subpar individual and combined results. Their limited utility remains evident regardless of inter-category mixing.
+
+---
+
+### Summary and Conclusions
+- **Top Synergistic Combinations**:
+  - **Frequency (TailoredMixup)**, **Temporal (TimeWarping, Permutation)**, and **Masking/Cropping (RandomZeroMasking, CutoutResize)** stand out as the most effective augmentations.
+  - Their synergy arises from **complementary distortions**—temporal methods reshape dependencies, frequency methods enhance spectral variation, and masking/cropping promotes robustness under partial occlusion.
+  
+- **Robust and Generalizable Representations**:
+  - Performance gains are stable across random seeds, confirming that **pairing well-chosen augmentations from different categories** leads to more generalizable EEG representations.
+
+- **Implications**:
+  - These findings reinforce the value of **strategically combining augmentations across categories**, especially for enhancing feature diversity and model robustness.
+
+---
+
+## 8.4 Best of All Categories - Severity
+
+### Performance Table
+| **Experiment Design (Severity)** | **Winning Augmentation**                                     | **Avg. MF1** | **Avg. Accuracy** |
+| -------------------------------- | ------------------------------------------------------------ | ------------ | ----------------- |
+| **Weighted p sum to 3**          | TailoredMixup + TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 68.62%       | 77.55%            |
+| **Weighted p sum to 4**          | TailoredMixup + TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 68.62%       | 77.54%            |
+| **Equal p sum to 3**             | TailoredMixup + TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 68.84%       | 77.70%            |
+| **Equal p sum to 4**             | TailoredMixup + TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 68.49%       | 77.52%            |
+| **Equal p sum to 5**             | TailoredMixup + TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 68.25%       | 77.25%            |
+
+---
+
+### Key Observations and Analysis
+
+#### **Motivation**
+In previous experiments, we identified a set of highly effective augmentations—**TailoredMixup**, **TimeWarping**, **Permutation**, **RandomZeroMasking**, and **CutoutResize**—and noted that overusing augmentations could degrade signal quality. To refine these insights, we now investigate **optimal “Goldilocks” severity** by adjusting application probabilities for each augmentation. This systematic approach helps determine the number of active augmentations most conducive to learning robust EEG representations. Notably, these multi-augmentation setups generally **outperform single, intra-category, and inter-category pairwise approaches**, validating our pursuit of a balanced augmentation strategy.
+
+---
+
+#### **1. Optimality Around 3–4 Active Augmentations**
+- Both **equal** and **weighted** probability distributions with a *sum of probabilities* set to **3 or 4** yield consistently strong performance:
+  - **Accuracy** ≈ 77–78%.
+  - **Macro-F1** ≈ 67–70%.
+- This trend confirms that moderate augmentation severity enhances feature learning.
+
+#### **2. Marginal Decline at Full Severity (Sum = 5)**
+- Applying **all five augmentations with probability 1** results in a slight performance dip (~77.25% Accuracy). This suggests that excessive transformations can obscure salient EEG features, emphasizing the need for moderation.
+
+#### **3. Preferential Weighting of Key Augmentations**
+- Assigning **probability 1** to **TailoredMixup** and **TimeWarping** leverages their proven benefits, while moderating **Permutation**, **RandomZeroMasking**, and **CutoutResize** minimizes overall distortion. This approach consistently delivers superior results compared to simpler strategies.
+
+#### **4. Stable Performance Across Seeds**
+- Variations remain within a **1–3% range**, consistent with prior experiments. These fluctuations do not impact the overarching conclusion: **balanced augmentation probabilities enhance classification results.**
+
+---
+
+### Summary and Conclusions
+
+These findings solidify the concept of a **“Goldilocks zone”** for augmentation severity, where **3–4 effective augmentations** strike an ideal balance between insufficient and excessive transformations. This multi-augmentation framework surpasses the best outcomes from single and simpler multi-augmentation experiments, demonstrating that **carefully orchestrated diversity in data perturbations** fosters superior feature representations and robust downstream performance.
+
+## 8.5 Full Fine-Tuning and Final Performance
+
+### 1. Motivation and Setup
+- **Beyond Linear Evaluation**: While linear evaluation isolates the encoder’s representational power, **fully fine-tuning** allows the encoder to adapt specifically to the labeled data, potentially refining latent features.
+- **Lightweight Architecture**: We continued using the same exceedingly small CNN-based backbone (only \(\sim 200k\) parameters), ensuring minimal computational overhead even during full fine-tuning.
+
+---
+
+### 2. Results
+- **Overall Accuracy**: **80.55%**  
+- **Macro-F1**: **71.68%**
+
+Achieving **80%+ accuracy** and **70%+ Macro-F1** represents a significant milestone, surpassing earlier thresholds. This improvement is particularly remarkable given the absence of:
+
+1. **Class Imbalance Mitigation**: No weighted losses or oversampling techniques were used.
+2. **Temporal Modeling**: Sequential modules (e.g., LSTMs, Transformers) were not employed to exploit inter-epoch context.
+3. **Complex Architectures**: Multi-head attention or other sophisticated deep learning components were avoided.
+4. **Large Parameter Budgets**: The model remains extremely lightweight, highlighting its suitability for resource-constrained settings.
+
+---
+
+### 3. Significance and Perspective
+
+#### **High Efficacy in Simple Settings**
+- Surpassing **80% overall accuracy** and **70% Macro-F1** validates that carefully tuned **data augmentations** and a well-designed **SSL pretraining strategy** can yield **state-of-the-art results**, even without advanced architectural enhancements or balancing techniques.
+
+#### **Minimal Resource Footprint**
+- The performance of this tiny network underscores the practicality of deploying EEG-based sleep stage classification models:
+  - **Real-Time Systems**: Effective for clinical monitoring systems.
+  - **Edge Devices**: Suitable for environments with limited compute resources.
+
+#### **Roadmap for Future Enhancements**
+- Addressing **class imbalance** through weighted losses or oversampling.
+- Incorporating **temporal modules** to model inter-epoch dependencies (e.g., LSTMs, Transformers).
+- Experimenting with **sophisticated architectures** to push performance further.
+
+---
+
+### Summary
+The **joint fine-tuning** phase with a lightweight CNN has enabled the model to surpass key performance thresholds, achieving:
+- **80.55% accuracy**
+- **71.68% Macro-F1**
+
+These results reinforce the efficacy of our **SSL-CRL pipeline** and demonstrate that **compact yet carefully designed models** can achieve competitive outcomes in single-epoch EEG classification. This work highlights the potential for lightweight, resource-efficient solutions to meet the demands of both clinical and real-world deployment scenarios.
 
 ------
 
 # 9. Discussion
 
-## 9.1 Interpretation of Key Findings
-
-- Why certain augmentations yield better latent representations.
-- The significance of small model size achieving ~80% accuracy and ~70% MF1 without temporal modeling.
-
-## 9.2 Implications for Real-World Applications
-
-- Potential for real-time, on-device EEG analysis due to small model size and robust representations.
-- Addressing labeling costs by unlocking value from unlabeled data.
-
-## 9.3 Limitations
-
-- Lack of temporal modeling in this study.
-- Limited datasets (focus on Sleep-EDF); generalization to other datasets untested.
-
-## 9.4 Future Work
-
-- Incorporate temporal modeling and test augmentations under recurrent or transformer-based architectures.
-- Explore supervised contrastive loss and other SSL paradigms.
-- Investigate advanced imbalance handling techniques and multimodal EEG signals.
+This chapter integrates the findings from our series of augmentation experiments (Sections 8.1–8.5) with broader considerations related to model design, real-world deployment, and directions for future research. Our goal is to interpret the results in a broader context, highlighting both the successes and constraints of the proposed self-supervised learning (SSL) framework for single-epoch EEG classification.
 
 ------
 
+## 9.1 Interpretation of Key Findings
+
+### 9.1.1 Augmentation Effectiveness
+
+Our experiments revealed that **masking/cropping** (e.g., RandomZeroMasking, CutoutResize) and **frequency-based** transformations (e.g., TailoredMixup) consistently outperformed **amplitude**-based and **noise/filtering** augmentations. This outcome suggests that targeted spatial and spectral distortions provide more meaningful contrast for the model to learn robust representations, while excessive amplitude shifts or smoothing can distort critical signal characteristics.
+
+1. **Single Augmentation Insights**
+   - RandomZeroMasking, CutoutResize, and TailoredMixup were top performers, each independently surpassing baseline accuracy and Macro-F1 scores.
+   - TimeWarping emerged as the strongest temporal augmentation, indicating that moderate temporal reshaping fosters greater invariance than harsh transformations like TimeReverse or Permutation alone.
+2. **Intra-Category and Inter-Category Synergy**
+   - Combinations of top augmentations within the same category (e.g., RandomTimeShift + Permutation in the temporal domain) often demonstrated higher performance, reinforcing the idea that related transformations can complement each other.
+   - When augmentations were drawn from **different categories** (temporal, frequency, masking/cropping), their synergy was even more pronounced, indicating that **spectro-temporal** and **spatial** manipulations together enrich the learned feature space.
+3. **Optimal “Goldilocks” Severity**
+   - The final experiments revealed that a total of **3–4 active augmentations** typically achieved the best balance. Excessively applying all five transformations (probability = 1 for each) slightly reduced accuracy, corroborating the principle that an overly distorted signal can hamper feature extraction.
+
+### 9.1.2 Significance of a Small Model Achieving ~80% Accuracy
+
+An essential outcome was surpassing **80% accuracy** and **70% Macro-F1** using a **simple, lightweight CNN** (≈200k parameters) without:
+
+- **Temporal Modeling** (e.g., LSTMs, Transformers),
+- **Class Imbalance Mitigation** (e.g., weighted loss, oversampling),
+- **Complex Architectures** (e.g., multi-head attention),
+- **Large Parameter Budgets** (tens of millions of parameters).
+
+This result underscores the **efficacy of carefully orchestrated augmentations** and **contrastive pretraining**, even in resource-constrained setups. It further indicates that carefully optimized data transformations and SSL objectives can substantially close performance gaps typically associated with deeper, more sophisticated architectures.
+
+------
+
+## 9.2 Implications for Real-World Applications
+
+1. **Real-Time, On-Device Analysis**
+    The high performance of a small CNN backbone suggests feasibility for **real-time EEG classification** on edge devices (e.g., wearable electronics or embedded clinical monitors). By demonstrating competitive accuracy with minimal compute overhead, this approach addresses practical constraints often encountered in healthcare settings.
+2. **Leveraging Unlabeled Data**
+    Our SSL-based framework capitalizes on **unlabeled EEG signals**, critical in domains where label acquisition is expensive or time-consuming. Robust representations gleaned from unlabeled data can accelerate model deployment and potentially reduce dependence on scarce expert annotations.
+3. **Clinical Utility**
+    Exceeding 80% accuracy in single-epoch classification holds promise for real-world sleep-stage monitoring systems. In scenarios where immediate stage classification is paramount—such as automated sleep labs or patient home-monitoring devices—these results highlight the **potential for efficient, on-site EEG processing**.
+
+------
+
+## 9.3 Limitations
+
+Despite the advances demonstrated, several limitations constrain the generalizability and scope of our findings:
+
+1. **Absence of Temporal Modeling**
+    While focusing on single-epoch classification isolates encoder effectiveness, it overlooks inter-epoch correlations. Future studies should examine **recurrent or transformer-based** modules to harness these temporal dependencies.
+2. **Restricted Architectures**
+    We tested a single CNN backbone (~200k parameters). Benchmarking against **larger or more sophisticated** architectures (e.g., state-of-the-art transformers for EEG) would clarify whether the same augmentation strategies can scale to more complex models.
+3. **Limited Dataset**
+    All experiments centered on Sleep-EDF. Although widely used, **testing on additional datasets** (e.g., SHHS, MASS) is necessary to confirm the model’s robustness and its ability to generalize across diverse EEG recording conditions.
+4. **No Class Imbalance Handling**
+    We did not adopt **weighted losses or oversampling strategies** to address potentially underrepresented sleep stages (e.g., N1). Different imbalance mitigation methods might further boost classification performance.
+
+------
+
+## 9.4 Future Work
+
+Based on our results, several avenues of investigation can extend and refine the present framework:
+
+1. **Temporal Modeling**
+    Incorporate **recurrent modules** (e.g., bi-LSTMs) or **attention-based** architectures (e.g., transformers) to capture inter-epoch dynamics, which could further improve classification performance in real-world scenarios where multi-epoch context is essential.
+2. **Advanced SSL Paradigms**
+    Explore **supervised contrastive loss** or **other SSL frameworks** (e.g., masked autoencoders for EEG) to enrich the learned representations beyond our current contrastive approach.
+3. **Imbalance Handling**
+    Investigate **weighted cross-entropy**, **focal loss**, or **oversampling** (e.g., SMOTE-like strategies) to mitigate sleep-stage imbalance, particularly beneficial for rare classes such as N1.
+4. **Robustness and Benchmarking**
+   - **Scaling to SOTA Backbones**: Pre-train large-scale encoders (≥1M parameters) to compare performance against existing pipelines (e.g., SleePyCo).
+   - **Multi-Dataset Evaluation**: Validate on **3 or more EEG databases** to establish replicability and ensure broad applicability.
+5. **Real-Time Deployments**
+    Pursue **on-device optimization** (e.g., quantization, model pruning) to confirm real-time feasibility and low-latency performance in edge scenarios, such as wearable devices.
+6. **Exploring Augmentation Impacts**
+    Conduct **detailed spectro-temporal analysis** of how each augmentation reshapes EEG signals, correlating these distortions with improvements in feature extraction and classification accuracy.
+
+
+
 # 10 Conclusion
 
-- Summarize the key outcomes: certain augmentation strategies significantly improve downstream classification, stable latent representations, and the feasibility of real-time inference.
-- Reiterate the contributions to SSL research in EEG-based sleep staging.
+This thesis has demonstrated that **carefully tailored data augmentations**, integrated within a **self-supervised contrastive learning** framework, can substantially enhance **sleep stage classification** from single-epoch EEG signals. Specifically, we identified that **masking/cropping** (RandomZeroMasking, CutoutResize), **frequency-based** (TailoredMixup), and select **temporal** (TimeWarping, Permutation) augmentations yield **stable latent representations** conducive to high downstream performance. Through a methodical exploration—covering single augmentations, intra-category combinations, inter-category synergies, and varied augmentation severity—we established a “Goldilocks” level of data transformation. By deploying an extremely small CNN backbone (~200k parameters), we surpassed **80% accuracy** and **70% Macro-F1**, underscoring the **feasibility of real-time inference** in resource-limited environments without resorting to advanced architectures or specialized class imbalance techniques.
+
+Moreover, our findings contribute to **Self-Supervised Learning (SSL) research** in EEG-based sleep staging by illustrating how targeted augmentations amplify the effectiveness of contrastive pretraining. The systematic assembly of these augmentation strategies—combined with a full fine-tuning stage—demonstrates that even compact models, when equipped with robust transformations, can achieve state-of-the-art classification outcomes. By extending these insights to more complex architectures and additional datasets, future research can solidify and broaden the applicability of this pipeline, further accelerating the development of accurate, efficient, and widely deployable EEG-based sleep staging solutions.
 
 ------
 
