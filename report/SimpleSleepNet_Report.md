@@ -167,8 +167,7 @@ $$
 $$
 where \($r_1, r_2$\) define the range of scaling factors.
 
-**Visual Placeholder**:
-`[Amplitude Scaling Visualization]`
+![RandomAmplitudeScale](C:\Users\shasw\SimpleSleepNet\report\RandomAmplitudeScale.png)
 
 ---
 
@@ -181,10 +180,7 @@ $$
 \text{ShiftedSignal}[X](t) = X(t) + \beta
 $$
 
-where \($d_1, d_2$\) define the shift range.
-
-**Visual Placeholder**:
-`[DC Shift Visualization]`
+where \($d_1, d_2$\) define the shift range.![RandomDCShift](C:\Users\shasw\SimpleSleepNet\report\RandomDCShift.png)
 
 ---
 
@@ -196,8 +192,7 @@ where \($d_1, d_2$\) define the shift range.
 $$
 \text{FlippedSignal}[X](t) = -X(t)
 $$
-**Visual Placeholder**:
-`[Sign Flip Visualization]`
+![SignFlip](C:\Users\shasw\SimpleSleepNet\report\SignFlip.png)
 
 ---
 
@@ -215,8 +210,7 @@ $$
 $$
 where $H(f)$ is the filter response, and $\mathcal{F}$ denotes the Fourier transform.
 
-**Visual Placeholder**:
-`[Band-Stop Filter Visualization]`
+![RandomBandStopFilter](C:\Users\shasw\SimpleSleepNet\report\RandomBandStopFilter.png)
 
 ---
 
@@ -230,8 +224,7 @@ $$
 $$
 
 
-**Visual Placeholder**:
-`[Tailored Mixup Visualization]`
+![TailoredMixup](C:\Users\shasw\SimpleSleepNet\report\TailoredMixup.png)
 
 ---
 
@@ -247,8 +240,7 @@ Focused on modifying the signal’s structure, these augmentations introduce gap
 $$
 \text{CutoutSignal}[X](t) = \text{Resize}([X_1, \dots, X_{r-1}, X_{r+1}, \dots, X_n])
 $$
-**Visual Placeholder**:
-`[Cutout and Resize Visualization]`
+![CutoutResize](C:\Users\shasw\SimpleSleepNet\report\CutoutResize.png)
 
 ---
 
@@ -264,8 +256,7 @@ $$
 X(t) & \text{otherwise}
 \end{cases}
 $$
-**Visual Placeholder**:
-`[Zero Masking Visualization]`
+![RandomZeroMasking](C:\Users\shasw\SimpleSleepNet\report\RandomZeroMasking.png)
 
 ---
 
@@ -281,8 +272,7 @@ These techniques simulate real-world signal distortions. RandomAdditiveGaussianN
 $$
 \text{FilteredSignal}[X](t) = \frac{1}{N} \sum_{i=0}^{N-1} X(t-i)
 $$
-**Visual Placeholder**:
-`[Average Filter Visualization]`
+![AverageFilter](C:\Users\shasw\SimpleSleepNet\report\AverageFilter.png)
 
 ---
 
@@ -296,8 +286,7 @@ $$
 $$
 
 
-**Visual Placeholder**:
-`[Gaussian Noise Visualization]`
+![RandomAdditiveGaussianNoise](C:\Users\shasw\SimpleSleepNet\report\RandomAdditiveGaussianNoise.png)
 
 ---
 
@@ -313,8 +302,7 @@ These augmentations modify the time axis of the signal to disrupt or alter tempo
 $$
 \text{ReversedSignal}[X](t) = X(L-t)
 $$
-**Visual Placeholder**:
-`[Time Reversal Visualization]`
+![TimeReverse](C:\Users\shasw\SimpleSleepNet\report\TimeReverse.png)
 
 ---
 
@@ -328,8 +316,7 @@ $$
 $$
 The segments are concatenated and resampled to the original length.
 
-**Visual Placeholder**:
-`[Time Warping Visualization]`
+![TimeWarping](C:\Users\shasw\SimpleSleepNet\report\TimeWarping.png)
 
 ---
 
@@ -343,8 +330,7 @@ $$
 $$
 where $\pi$ is a random permutation.
 
-**Visual Placeholder**:
-`[Permutation Visualization]`
+![Permutation](C:\Users\shasw\SimpleSleepNet\report\Permutation.png)
 
 ---
 
@@ -356,10 +342,7 @@ where $\pi$ is a random permutation.
 $$
 \text{ShiftedSignal}[X](t) = X(t + t_s)
 $$
-**Visual Placeholder**:
-`[Time Shift Visualization]`
-
-
+![RandomTimeShift](C:\Users\shasw\SimpleSleepNet\report\RandomTimeShift.png)
 
 # 4 Dataset
 
@@ -371,15 +354,7 @@ The Sleep-EDF Expanded dataset ([Goldberger et al., 2000](https://www.sciencedir
 - **SC (Sleep Cassette):** 79 recordings from healthy individuals aged 25–101 years, free of sleep disorders.
 - **ST (Study Temazepam):** 22 recordings from subjects in a study on the effects of [Temazepam](https://www.sciencedirect.com/topics/pharmacology-toxicology-and-pharmaceutical-science/temazepam) on sleep.
 
-For this study, SC recordings were used, following prior work ([Mousavi et al., 2019](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b34), [Perslev et al., 2019](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b37), [Phan et al., 2019](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b41), [Phan et al., 2021](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b42), [Phan et al., 2022](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b43)). Sleep staging was performed according to the R&K rules ([Rechtschaffen, 1968](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b47)), classifying each 30-second epoch into one of eight categories:
-- WAKE
-- REM
-- N1
-- N2
-- N3
-- N4
-- MOVEMENT
-- UNKNOWN
+For this study, SC recordings were used, following prior work ([Mousavi et al., 2019](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b34), [Perslev et al., 2019](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b37), [Phan et al., 2019](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b41), [Phan et al., 2021](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b42), [Phan et al., 2022](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b43)). Sleep staging was performed according to the R&K rules ([Rechtschaffen, 1968](https://www.sciencedirect.com/science/article/pii/S0957417423030531#b47)), classifying each 30-second epoch into one of eight categories: WAKE, REM, N1, N2, N3, N4, MOVEMENT, UNKNOWN.
 
 To address class imbalance, only 30 minutes of WAKE epochs before and after the sleep period were retained.
 
@@ -424,6 +399,8 @@ To address class imbalance, only 30 minutes of WAKE epochs before and after the 
 | **Channel Selection**   | Retained only Fpz-Cz.                            |
 | **Exclusion**           | Removed MOVEMENT, UNKNOWN, and non-sleep epochs. |
 | **Class Consolidation** | Merged N3 and N4 stages.                         |
+
+![EEG-epochs](C:\Users\shasw\SimpleSleepNet\report\EEG-epochs.png)
 
 ## 4.3 Exploratory Analysis
 
@@ -552,6 +529,8 @@ where:
 - $\tau$ is the temperature parameter, controlling the concentration level of the distribution.
 - $N$ is the number of positive pairs in a mini-batch.
 
+![image-20250102152004917](C:\Users\shasw\AppData\Roaming\Typora\typora-user-images\image-20250102152004917.png)
+
 The encoder is optimized using the Adam optimizer with a default learning rate of $1\times 10^{-3}$. Training proceeds for a predefined number of maximum epochs, with early stopping criteria based on validation loss improvements to prevent overfitting. Upon completion, the best-performing encoder model, determined by the lowest validation loss, is saved for subsequent evaluation.
 
 ### Stage 2 : Supervised Linear Evaluation
@@ -562,7 +541,11 @@ The classifier is trained using the **Cross-Entropy Loss**:
 $$
 \mathcal{L}_{\text{CE}}(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{c=1}^{C} y_c \log p_\phi(y=c \mid \mathbf{z})
 $$
-where $\mathbf{y}$ is the one-hot encoded true label vector. The Adam optimizer, with a default learning rate of $1\times 10^{-3}$, updates only the classifier’s parameters $\phi$. Training incorporates early stopping based on validation loss to enhance generalization. The best classifier model, exhibiting the lowest validation loss, is preserved for final evaluation.
+where $\mathbf{y}$ is the one-hot encoded true label vector. 
+
+![image-20250102153327463](C:\Users\shasw\AppData\Roaming\Typora\typora-user-images\image-20250102153327463.png)
+
+The Adam optimizer, with a default learning rate of $1\times 10^{-3}$, updates only the classifier’s parameters $\phi$. Training incorporates early stopping based on validation loss to enhance generalization. The best classifier model, exhibiting the lowest validation loss, is preserved for final evaluation.
 
 This linear evaluation protocol facilitates a clear separation between representation learning and classification, enabling an unbiased assessment of the encoder’s ability to extract meaningful features from EEG data.
 
@@ -610,6 +593,58 @@ $$
 
 **Fully Connected Layer**: Projects features into a 128-dimensional latent space, generating normalized and discriminative embeddings for downstream tasks.
 
+```Python
+class Mish(nn.Module):
+    def forward(self, x):
+        return x * torch.tanh(F.softplus(x))
+    
+class SimpleSleepNet(nn.Module):
+    
+    def __init__(self, latent_dim=128, dropout=0.2):
+        super(SimpleSleepNet, self).__init__()
+        
+        self.latent_dim = latent_dim
+        self.dropout = nn.Dropout(p=dropout)
+        
+        self.conv_path = nn.Sequential(
+            
+            # First Convolutional Block:
+            nn.Conv1d(in_channels=1, out_channels=32, kernel_size=64, stride=8, padding=63, dilation=1, bias=False),
+            nn.BatchNorm1d(32),
+            Mish(),
+            self.dropout,
+            
+            # Second Convolutional Block:
+            nn.Conv1d(in_channels=32, out_channels=64, kernel_size=32, stride=4, padding=62, dilation=2, bias=False),
+            nn.BatchNorm1d(64),
+            Mish(),
+            self.dropout,
+            
+            # Third Convolutional Block:
+            nn.Conv1d(in_channels=64, out_channels=128, kernel_size=16, stride=2, padding=60, dilation=4, bias=False),
+            nn.BatchNorm1d(128),
+            Mish(),
+            self.dropout,
+        )
+        
+        # Fully Connected Layer for Embedding:
+        self.fc = nn.Sequential(
+            nn.Linear(128, self.latent_dim),
+            nn.BatchNorm1d(self.latent_dim),
+            Mish(),
+            self.dropout
+        )
+        
+        
+    def forward(self, x):
+        x = self.conv_path(x)            		# Apply convolutional path (Batch, 128, L')
+        x = F.adaptive_avg_pool1d(x, 1)  		# Global average pooling (Batch, 128, 1)
+        x = x.view(x.size(0), -1)        		# Flatten the tensor (Batch, 128)
+        x = self.fc(x)                   		# Apply fully connected layer (Batch, latent_dim)
+        x = F.normalize(x, p=2, dim=1)   		# Normalize embeddings to unit length
+        return x
+```
+
 ### Design Highilights
 
 1. The CNN-based encoder was designed to capture short, medium and long-term dependencies within EEG signals, positioning it as a representative archetype, aligning with standard feature extractors prevalent in EEG-based sleep stage classification research. 
@@ -637,7 +672,32 @@ Three linear layers with the following configurations:
 
 **Mish**: Replaces traditional ReLU, providing smoother gradients and enabling richer feature transformations. Mish activation enhances learning for complex feature relationships, particularly valuable for EEG embeddings.
 
+```python
+class Mish(nn.Module):
+    def forward(self, x):
+        return x * torch.tanh(F.softplus(x))
 
+class SleepStageClassifier(nn.Module):
+
+    def __init__(self, input_dim: int = 128, num_classes: int = 5, dropout_probs: float = 0.5):
+        super(SleepStageClassifier, self).__init__()
+        
+        self.classifier = nn.Sequential(
+            nn.Linear(input_dim, 256),    # First linear layer
+            nn.BatchNorm1d(256),          # Batch normalization
+            Mish(),                       # Mish activation
+            nn.Dropout(p=dropout_probs),  # First dropout layer
+            nn.Linear(256, 128),          # Second linear layer
+            nn.BatchNorm1d(128),          # Batch normalization
+            Mish(),                       # Mish activation
+            nn.Dropout(p=dropout_probs),  # Second dropout layer
+            nn.Linear(128, num_classes)   # Output layer
+        )
+        
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.classifier(x)
+        return x
+```
 
 ------
 
@@ -674,15 +734,18 @@ Three linear layers with the following configurations:
 
 We selected **RandomAdditiveGaussianNoise** as the baseline augmentation due to its prevalence in EEG and time-series analysis. Its Accuracy (65.33%) and Macro-F1 (55.53%) serve as reference points for other augmentations.
 
-#### **Top Performers**
+**Top Performers**
+
 - **RandomZeroMasking (Masking-Cropping)** and **TailoredMixup (Frequency-Based)** demonstrated the highest Accuracy (>72%) and Macro-F1 (>65%).
 - **CutoutResize (Masking-Cropping)** also performed strongly, highlighting the potential of selective masking and cropping for feature enhancement.
 
-#### **Moderate Performers**
+**Moderate Performers**
+
 - Within **Temporal Augmentations**, **TimeWarping** stood out with an Accuracy of 71.58% and Macro-F1 of 63.25%.
 - **RandomBandStopFilter (Frequency-Based)** and **RandomDCShift (Amplitude-Based)** yielded moderate improvements, suggesting partial benefits from targeted frequency filtering and amplitude adjustments.
 
-#### **Underperformers**
+**Underperformers**
+
 - **AverageFilter (Noise-and-Filtering)** recorded the lowest Macro-F1 (47.98%), indicating that excessive smoothing can hinder signal discrimination.
 - Amplitude-based augmentations, such as **SignFlip** and **RandomAmplitudeScale**, also underperformed, possibly due to distortions in key signal characteristics.
 
@@ -724,21 +787,25 @@ We selected **RandomAdditiveGaussianNoise** as the baseline augmentation due to 
 
 ### Key Observations and Analysis
 
-#### Temporal Category
+**<u>Temporal Category</u>**
 
 - **Reinforcing Pairs**: Several top-performing combinations (Accuracy ≈ 72%, Macro-F1 ≈ 64–66%) emerge when **RandomTimeShift** pairs with **Permutation** or **TimeWarping**, suggesting complementary benefits.
 - **Redundancy**: Pairings like **TimeReverse + Permutation** or **TimeReverse + TimeWarping** exhibit lower improvements, indicating potential overlap in how they distort temporal structure.
 
-#### Masking-Cropping (M/C)
+**<u>Masking-Cropping</u>**
+
 - **RandomZeroMasking + CutoutResize** achieves **72.94% Accuracy** and **64.83% Macro-F1**, reinforcing the earlier conclusion that targeted masking or cropping fosters robust representations. Performance remains competitive with top temporal combinations.
 
-#### Frequency Category
+**<u>Frequency Category</u>**
+
 - **RandomBandStopFilter + TailoredMixup** yields modest gains (**70.09% Accuracy; 59.72% Macro-F1**). While **TailoredMixup** was effective individually, adding another frequency-based method showed partial synergy but did not reach top-tier levels.
 
-#### Noise-and-Filtering (N/F)
+**<u>Noise-and-Filtering</u>**
+
 - **RandomAdditiveGaussianNoise + AverageFilter** underperforms (**59.71% Accuracy; 47.79% Macro-F1**). The smoothing effect of **AverageFilter** seems to degrade the signal further when combined with noise, indicating potentially conflicting distortions.
 
-#### Amplitude-Based (Amp)
+**<u>Amplitude-Based</u>**
+
 - All amplitude-based combinations remain underperformers (**Accuracy ≤ 65%; Macro-F1 ≤ 53%**), consistent with single-augmentation findings. Combining amplitude transformations often leads to overly distorted signals, degrading discriminative information.
 
 ---
@@ -783,23 +850,28 @@ We selected **RandomAdditiveGaussianNoise** as the baseline augmentation due to 
 
 ### Key Observations and Analysis
 
-#### 1. **Overall Consistency and Moderate Variability**
+1. **Overall Consistency and Moderate Variability**
+
 - Across seeds, performance variations generally lie within a **1–3% range** for both Accuracy and Macro-F1, reflecting **moderate yet non-trivial fluctuations**.
 - Despite these variations, the **ranking of augmentation sets** remains stable, confirming consistent relative performance.
 
-#### 2. **Synergistic Combinations**
+2. **Synergistic Combinations**
+
 - **Frequency + Masking/Cropping**: Augmentations such as **TailoredMixup + RandomZeroMasking + CutoutResize** achieve high Accuracy (~76%) and competitive Macro-F1 (~67%), highlighting the synergy between **spectral manipulation** and **strategic signal masking/cropping**.
 - **Temporal + Masking/Cropping**: Combinations like **TimeWarping + Permutation + RandomZeroMasking** or **TimeWarping + RandomZeroMasking + CutoutResize** yield Accuracy around ~75–76%, indicating complementary benefits of temporal distortions with spatial manipulations.
 
-#### 3. **Frequency + Temporal**
+3. **Frequency + Temporal**
+
 - **TailoredMixup + TimeWarping + Permutation** ranks among the better performers (~76.5–77.5% Accuracy), leveraging the strengths of **frequency diversity** and **temporal structure manipulation** to enhance feature representations.
 
-#### 4. **Absence of Amplitude-Based Augmentations**
+4. **Absence of Amplitude-Based Augmentations**
+
 - Amplitude-based methods (e.g., **SignFlip, RandomAmplitudeScale**) were excluded due to their consistently subpar individual and combined results. Their limited utility remains evident regardless of inter-category mixing.
 
 ---
 
 ### Summary and Conclusions
+
 - **Top Synergistic Combinations**:
   - **Frequency (TailoredMixup)**, **Temporal (TimeWarping, Permutation)**, and **Masking/Cropping (RandomZeroMasking, CutoutResize)** stand out as the most effective augmentations.
   - Their synergy arises from **complementary distortions**—temporal methods reshape dependencies, frequency methods enhance spectral variation, and masking/cropping promotes robustness under partial occlusion.
@@ -823,28 +895,37 @@ We selected **RandomAdditiveGaussianNoise** as the baseline augmentation due to 
 | **Equal p sum to 4**             | TailoredMixup + TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 68.49%       | 77.52%            |
 | **Equal p sum to 5**             | TailoredMixup + TimeWarping + Permutation + RandomZeroMasking + CutoutResize | 68.25%       | 77.25%            |
 
+![confusion_matrix_49](C:\Users\shasw\SimpleSleepNet\results\confusion_matrix_49.png)
+
+Confusion Matrix for "**Equal p sum to 3**"
+
 ---
 
 ### Key Observations and Analysis
 
-#### **Motivation**
+**Motivation**
+
 In previous experiments, we identified a set of highly effective augmentations—**TailoredMixup**, **TimeWarping**, **Permutation**, **RandomZeroMasking**, and **CutoutResize**—and noted that overusing augmentations could degrade signal quality. To refine these insights, we now investigate **optimal “Goldilocks” severity** by adjusting application probabilities for each augmentation. This systematic approach helps determine the number of active augmentations most conducive to learning robust EEG representations. Notably, these multi-augmentation setups generally **outperform single, intra-category, and inter-category pairwise approaches**, validating our pursuit of a balanced augmentation strategy.
 
 ---
 
-#### **1. Optimality Around 3–4 Active Augmentations**
+**1. Optimality Around 3–4 Active Augmentations**
+
 - Both **equal** and **weighted** probability distributions with a *sum of probabilities* set to **3 or 4** yield consistently strong performance:
   - **Accuracy** ≈ 77–78%.
   - **Macro-F1** ≈ 67–70%.
 - This trend confirms that moderate augmentation severity enhances feature learning.
 
-#### **2. Marginal Decline at Full Severity (Sum = 5)**
+**2. Marginal Decline at Full Severity (Sum = 5)**
+
 - Applying **all five augmentations with probability 1** results in a slight performance dip (~77.25% Accuracy). This suggests that excessive transformations can obscure salient EEG features, emphasizing the need for moderation.
 
-#### **3. Preferential Weighting of Key Augmentations**
+**3. Preferential Weighting of Key Augmentations**
+
 - Assigning **probability 1** to **TailoredMixup** and **TimeWarping** leverages their proven benefits, while moderating **Permutation**, **RandomZeroMasking**, and **CutoutResize** minimizes overall distortion. This approach consistently delivers superior results compared to simpler strategies.
 
-#### **4. Stable Performance Across Seeds**
+**4. Stable Performance Across Seeds**
+
 - Variations remain within a **1–3% range**, consistent with prior experiments. These fluctuations do not impact the overarching conclusion: **balanced augmentation probabilities enhance classification results.**
 
 ---
@@ -855,13 +936,15 @@ These findings solidify the concept of a **“Goldilocks zone”** for augmentat
 
 ## 8.5 Full Fine-Tuning and Final Performance
 
-### 1. Motivation and Setup
+### Motivation and Setup
+
 - **Beyond Linear Evaluation**: While linear evaluation isolates the encoder’s representational power, **fully fine-tuning** allows the encoder to adapt specifically to the labeled data, potentially refining latent features.
-- **Lightweight Architecture**: We continued using the same exceedingly small CNN-based backbone (only \(\sim 200k\) parameters), ensuring minimal computational overhead even during full fine-tuning.
+- **Lightweight Architecture**: We continued using the same exceedingly small CNN-based backbone (only \($\sim 200k$\) parameters), ensuring minimal computational overhead even during full fine-tuning.
 
 ---
 
-### 2. Results
+### Results
+
 - **Overall Accuracy**: **80.55%**  
 - **Macro-F1**: **71.68%**
 
@@ -872,19 +955,24 @@ Achieving **80%+ accuracy** and **70%+ Macro-F1** represents a significant miles
 3. **Complex Architectures**: Multi-head attention or other sophisticated deep learning components were avoided.
 4. **Large Parameter Budgets**: The model remains extremely lightweight, highlighting its suitability for resource-constrained settings.
 
+![image-20250102155042073](C:\Users\shasw\AppData\Roaming\Typora\typora-user-images\image-20250102155042073.png)
+
 ---
 
-### 3. Significance and Perspective
+### Significance and Perspective
 
-#### **High Efficacy in Simple Settings**
+**High Efficacy in Simple Settings**
+
 - Surpassing **80% overall accuracy** and **70% Macro-F1** validates that carefully tuned **data augmentations** and a well-designed **SSL pretraining strategy** can yield **state-of-the-art results**, even without advanced architectural enhancements or balancing techniques.
 
-#### **Minimal Resource Footprint**
+**Minimal Resource Footprint**
+
 - The performance of this tiny network underscores the practicality of deploying EEG-based sleep stage classification models:
   - **Real-Time Systems**: Effective for clinical monitoring systems.
   - **Edge Devices**: Suitable for environments with limited compute resources.
 
-#### **Roadmap for Future Enhancements**
+**Roadmap for Future Enhancements**
+
 - Addressing **class imbalance** through weighted losses or oversampling.
 - Incorporating **temporal modules** to model inter-epoch dependencies (e.g., LSTMs, Transformers).
 - Experimenting with **sophisticated architectures** to push performance further.
@@ -892,6 +980,7 @@ Achieving **80%+ accuracy** and **70%+ Macro-F1** represents a significant miles
 ---
 
 ### Summary
+
 The **joint fine-tuning** phase with a lightweight CNN has enabled the model to surpass key performance thresholds, achieving:
 - **80.55% accuracy**
 - **71.68% Macro-F1**
@@ -908,7 +997,7 @@ This chapter integrates the findings from our series of augmentation experiments
 
 ## 9.1 Interpretation of Key Findings
 
-### 9.1.1 Augmentation Effectiveness
+### Augmentation Effectiveness
 
 Our experiments revealed that **masking/cropping** (e.g., RandomZeroMasking, CutoutResize) and **frequency-based** transformations (e.g., TailoredMixup) consistently outperformed **amplitude**-based and **noise/filtering** augmentations. This outcome suggests that targeted spatial and spectral distortions provide more meaningful contrast for the model to learn robust representations, while excessive amplitude shifts or smoothing can distort critical signal characteristics.
 
@@ -921,7 +1010,7 @@ Our experiments revealed that **masking/cropping** (e.g., RandomZeroMasking, Cut
 3. **Optimal “Goldilocks” Severity**
    - The final experiments revealed that a total of **3–4 active augmentations** typically achieved the best balance. Excessively applying all five transformations (probability = 1 for each) slightly reduced accuracy, corroborating the principle that an overly distorted signal can hamper feature extraction.
 
-### 9.1.2 Significance of a Small Model Achieving ~80% Accuracy
+### Significance of a Small Model Achieving ~80% Accuracy
 
 An essential outcome was surpassing **80% accuracy** and **70% Macro-F1** using a **simple, lightweight CNN** (≈200k parameters) without:
 

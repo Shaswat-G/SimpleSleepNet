@@ -22,7 +22,7 @@ dset/
 *.npz
 *.xlsx
 *.edf
-*.png
+# *.png
 
 
 # Checkpoint files
