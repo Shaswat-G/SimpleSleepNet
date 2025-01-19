@@ -36,12 +36,8 @@
     "min_improvement": 0.005,
     "best_model_pth": "checkpoints/full_model/"
   },
-  "experiment_num": 1111,
+  "experiment_num": 2000,
   "augmentations": {
-    "TailoredMixup": { "p": 0.6 },
-    "TimeWarping": { "p": 0.6 },
-    "Permutation": { "p": 0.6 },
-    "RandomZeroMasking": { "p": 0.6 },
-    "CutoutResize": { "p": 0.6 }
+    "RandomAdditiveGaussianNoise" : {"p": 1.0},
   }
 }
