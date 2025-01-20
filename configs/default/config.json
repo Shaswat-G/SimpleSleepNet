@@ -38,6 +38,6 @@
   },
   "experiment_num": 2000,
   "augmentations": {
-    "RandomAdditiveGaussianNoise" : {"p": 1.0},
+    "RandomAdditiveGaussianNoise" : {"p": 1.0}
   }
 }
