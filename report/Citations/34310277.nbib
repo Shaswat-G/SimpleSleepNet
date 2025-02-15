@@ -1,0 +1,94 @@
+PMID- 34310277
+OWN - NLM
+STAT- MEDLINE
+DCOM- 20220217
+LR  - 20240822
+IS  - 1550-9397 (Electronic)
+IS  - 1550-9389 (Print)
+IS  - 1550-9389 (Linking)
+VI  - 18
+IP  - 1
+DP  - 2022 Jan 1
+TI  - Interrater reliability of sleep stage scoring: a meta-analysis.
+PG  - 193-202
+LID - 10.5664/jcsm.9538 [doi]
+AB  - STUDY OBJECTIVES: We evaluated the interrater reliabilities of manual 
+      polysomnography sleep stage scoring. We included all studies that employed 
+      Rechtschaffen and Kales rules or American Academy of Sleep Medicine standards. We 
+      sought the overall degree of agreement and those for each stage. METHODS: The 
+      keywords were "Polysomnography (PSG)," "sleep staging," "Rechtschaffen and Kales 
+      (R&K)," "American Academy of Sleep Medicine (AASM)," "interrater (interscorer) 
+      reliability," and "Cohen's kappa." We searched PubMed, OVID Medline, EMBASE, the 
+      Cochrane library, KoreaMed, KISS, and the MedRIC. The exclusion criteria included 
+      automatic scoring and pediatric patients. We collected data on scorer histories, 
+      scoring rules, numbers of epochs scored, and the underlying diseases of the 
+      patients. RESULTS: A total of 101 publications were retrieved; 11 satisfied the 
+      selection criteria. The Cohen's kappa for manual, overall sleep scoring was 0.76, 
+      indicating substantial agreement (95% confidence interval, 0.71-0.81; P < .001). 
+      By sleep stage, the figures were 0.70, 0.24, 0.57, 0.57, and 0.69 for the W, N1, 
+      N2, N3, and R stages, respectively. The interrater reliabilities for stage N2 and 
+      N3 sleep were moderate, and that for stage N1 sleep was only fair. CONCLUSIONS: 
+      We conducted a meta-analysis to generalize the variation in manual scoring of 
+      polysomnography and provide reference data for automatic sleep stage scoring 
+      systems. The reliability of manual scorers of polysomnography sleep stages was 
+      substantial. However, for certain stages, the results were poor; validity 
+      requires improvement. CITATION: Lee YJ, Lee JY, Cho JH, Choi JH. Interrater 
+      reliability of sleep stage scoring: a meta-analysis. J Clin Sleep Med. 
+      2022;18(1):193-202.
+CI  - © 2022 American Academy of Sleep Medicine.
+FAU - Lee, Yun Ji
+AU  - Lee YJ
+AD  - Department of Otorhinolaryngology-Head and Neck Surgery, College of Medicine, 
+      Soonchunhyang University, Bucheon Hospital, Bucheon, Korea.
+FAU - Lee, Jae Yong
+AU  - Lee JY
+AD  - Department of Otorhinolaryngology-Head and Neck Surgery, College of Medicine, 
+      Soonchunhyang University, Bucheon Hospital, Bucheon, Korea.
+FAU - Cho, Jae Hoon
+AU  - Cho JH
+AD  - Department of Otorhinolaryngology-Head and Neck Surgery, College of Medicine, 
+      Konkuk University, Seoul, Korea.
+FAU - Choi, Ji Ho
+AU  - Choi JH
+AD  - Department of Otorhinolaryngology-Head and Neck Surgery, College of Medicine, 
+      Soonchunhyang University, Bucheon Hospital, Bucheon, Korea.
+LA  - eng
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - J Clin Sleep Med
+JT  - Journal of clinical sleep medicine : JCSM : official publication of the American 
+      Academy of Sleep Medicine
+JID - 101231977
+SB  - IM
+MH  - Child
+MH  - Humans
+MH  - Observer Variation
+MH  - Polysomnography
+MH  - Reproducibility of Results
+MH  - *Sleep
+MH  - *Sleep Stages
+PMC - PMC8807917
+OTO - NOTNLM
+OT  - interrater reliability
+OT  - meta-analysis
+OT  - sleep stage scoring
+COIS- All authors have seen and approved the manuscript. Work for this study was 
+      performed in the Department of Otorhinolaryngology—Head and Neck Surgery, College 
+      of Medicine, Soonchunhyang University, Bucheon Hospital, Bucheon, Korea. This 
+      study was funded by the Soonchunhyang University Research Fund. The authors 
+      report no conflicts of interest.
+EDAT- 2021/07/27 06:00
+MHDA- 2022/02/19 06:00
+PMCR- 2023/01/01
+CRDT- 2021/07/26 17:19
+PHST- 2021/07/27 06:00 [pubmed]
+PHST- 2022/02/19 06:00 [medline]
+PHST- 2021/07/26 17:19 [entrez]
+PHST- 2023/01/01 00:00 [pmc-release]
+AID - jcsm.9538 [pii]
+AID - JC2100171 [pii]
+AID - 10.5664/jcsm.9538 [doi]
+PST - ppublish
+SO  - J Clin Sleep Med. 2022 Jan 1;18(1):193-202. doi: 10.5664/jcsm.9538.
