@@ -46,4 +46,4 @@ logs/
 # Miscellaneous
 *.DS_Store
 *.idea/
-*.vscode/
+*.vscode/setup_contrib.sh

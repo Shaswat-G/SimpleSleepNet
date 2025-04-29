@@ -1,3 +1,5 @@
+[![Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-Active-brightgreen.svg)](.github/CODE_OF_CONDUCT.md) [![Contributing](https://img.shields.io/badge/Contributions-Welcome-blue.svg)](.github/CONTRIBUTING.md)
+
 # SimpleSleepNet: Self-Supervised Contrastive Learning for EEG-Based Sleep Stage Classification
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
