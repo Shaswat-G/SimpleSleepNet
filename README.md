@@ -136,7 +136,7 @@ SimpleSleepNet implements 13 EEG-specific augmentations across 5 categories:
 | **Temporal**         | TimeReversal, TimeWarping, Permutation, RandomTimeShift | Apply non-linear temporal transformations                              |
 
 
-![SSLCRL](/assets/images/projects/SSLCRL.png)
+![SSLCRL](https://shaswat-g.github.io/assets/images/projects/SSLCRL.png)
 
 Example implementation of `TailoredMixup` augmentation:
 
@@ -179,7 +179,7 @@ class TailoredMixup(BaseAugmentation):
 
         return mixed_signal
 ```
-![TailoredMixup](/assets/images/projects/TailoredMixup.png)
+![TailoredMixup](https://shaswat-g.github.io/assets/images/projects/TailoredMixup.png)
 
 ### 2. Neural Architectures
 
@@ -228,7 +228,7 @@ class SimpleSleepNet(nn.Module):
         return z_norm
 ```
 
-![Classifier](/assets/images/projects/Linear-eval.png)
+![Classifier](https://shaswat-g.github.io/assets/images/projects/Linear-eval.png)
 
 #### Classifier: SleepStageClassifier
 
@@ -485,7 +485,7 @@ Our systematic evaluation of EEG augmentations reveals several key findings:
 
 4. **Latent space quality:** Our contrastive pretraining produces well-separated clusters that align with sleep stage labels, as evidenced by high Adjusted Rand Index (ARI) scores.
 
-![Evaluation](/assets/images/projects/confusion_matrix_49.png)
+![Evaluation](https://shaswat-g.github.io/assets/images/projects/confusion_matrix_49.png)
 
 ## Extending SimpleSleepNet
 
